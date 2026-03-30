@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<!-- saved from url=(0054)file:///C:/Users/Tana_tsw.a/Downloads/portfolio_1.html -->
+<html lang="en"><!-- lang="en": Helps screen readers and search engines identify the language. --><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- <head>: Invisible metadata — character set, title, fonts, all styles. -->
+
+  
+  <!-- UTF-8: Universal character encoding. Handles all symbols safely. -->
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- viewport: Makes layout responsive. Without this, phones zoom out to show the desktop view. -->
+
+  <title>Macdonald T. Pazuwa</title>
+  <!-- <title>: Text shown in the browser tab and in search engine results. -->
+
+  <!-- Google Fonts: Two purposeful choices.
+       "Cormorant Garamond" — a high-contrast editorial serif for headings; rare, distinctive.
+       "Syne"               — a geometric sans-serif with personality for body text.
+       display=swap: Show system font immediately, swap once custom fonts load. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com/">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+  <!-- crossorigin: Required for font files served from a different domain (CORS). -->
+  <link href="./Macdonald T. Pazuwa_files/css2" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES  (Design Tokens)
+       Defined on :root so every element can inherit them via var().
+       Change one value here and it updates the whole site.
+    ============================================================ */
+    :root {
+      --bg:        #0c0c0c;   /* near-black canvas                   */
+      --surface:   #131313;   /* card / nav background               */
+      --border:    #222;      /* thin separator lines                */
+      --gold:      #c8a84b;   /* primary accent — warm gold          */
+      --gold-lt:   #dfc07a;   /* lighter gold for hover / active     */
+      --text:      #e4ddd2;   /* warm off-white — main text          */
+      --muted:     #6b6560;   /* secondary / label text              */
+
+      --serif:  'Cormorant Garamond', Georgia, serif;
+      --sans:   'Syne', 'Helvetica Neue', sans-serif;
+
+      /* Spacing scale: multiples of 8px expressed as rem */
+      --s1: 0.5rem;   /*  8px — tight gap */
+      --s2: 1rem;     /* 16px — compact   */
+      --s3: 1.5rem;   /* 24px — standard  */
+      --s4: 2.5rem;   /* 40px — section   */
+      --s5: 4rem;     /* 64px — page      */
+
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      /* --ease: A smooth deceleration curve used for all transitions. */
+
+      --r: 6px; /* Default border-radius for cards and inputs */
+    }
+
+    /* ============================================================
+       RESET
+       Browsers have opinionated default margins, paddings and
+       box-sizing. We zero them out for full control.
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      /* border-box: padding + border are INSIDE the declared width.
+         Default (content-box) would add them OUTSIDE, making layout maths hard. */
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+    /* smooth: Anchor-link jumps become animated scrolls. */
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1rem;           /* 16px base — inheritable by children */
+      line-height: 1.7;          /* Generous line spacing for readability */
+      overflow-x: hidden;        /* Prevent horizontal scrollbar from animations */
+    }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    nav {
+      position: fixed;           /* Stays at top even while scrolling */
+      top: 0; left: 0; right: 0; /* Stretch across full viewport width */
+      z-index: 100;              /* Sits above page content */
+      height: 60px;
+      background: rgba(12,12,12,0.90);
+      /* Semi-transparent: 0.90 opacity so background content shows faintly. */
+      backdrop-filter: blur(10px);
+      /* blur(): Frosted-glass effect on whatever is behind the nav. */
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;       /* Vertically centre logo + links */
+      justify-content: space-between; /* Push logo left, links right */
+      padding: 0 var(--s4);
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      color: var(--gold);
+      text-decoration: none;     /* Remove underline from anchor */
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links {
+      list-style: none;          /* Remove bullet points from <ul> */
+      display: flex;
+      gap: var(--s3);
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase; /* ALL-CAPS label style */
+      transition: color 0.25s var(--ease);
+      padding-bottom: 2px;
+      border-bottom: 1px solid transparent;
+      /* transparent border reserves space so layout doesn't shift on active */
+    }
+
+    /* Hover state: highlight link text gold */
+    .nav-links a:hover { color: var(--gold); }
+
+    /* Active state: gold text + visible underline for current page */
+    .nav-links a.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    /* ============================================================
+       PAGE SYSTEM
+       All four pages live in the DOM simultaneously.
+       Only one has class "active" — the others are hidden.
+       CSS handles show/hide; JS swaps the class.
+    ============================================================ */
+    .page {
+      display: none;             /* Hidden by default */
+      min-height: 100vh;         /* At least full viewport height */
+      padding-top: 60px;         /* Clear the fixed nav (60px tall) */
+      animation: rise 0.45s var(--ease) both;
+      /* rise: fade + slide up on page entry — defined below */
+    }
+
+    .page.active { display: block; } /* Show active page */
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      /* Start invisible and slightly below final position */
+      to   { opacity: 1; transform: translateY(0); }
+      /* End fully visible at normal position */
+    }
+
+    /* ============================================================
+       LAYOUT HELPERS
+    ============================================================ */
+    .wrap {
+      /* Centred content column with consistent padding */
+      max-width: 1020px;
+      margin: 0 auto;            /* auto left/right: horizontally centred */
+      padding: var(--s5) var(--s4);
+    }
+
+    /* Small all-caps label above section headings */
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: var(--s1);
+    }
+
+    /* Main section heading — large serif */
+    .heading {
+      font-family: var(--serif);
+      font-size: clamp(1.9rem, 4vw, 2.8rem);
+      /* clamp(min, preferred, max): scales with viewport, never too small or large */
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: var(--s4);
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--s1);
+      padding: 0.75rem 1.75rem;
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;           /* Hand cursor on hover */
+      border-radius: var(--r);
+      transition: all 0.25s var(--ease);
+    }
+
+    /* Filled gold button — primary action */
+    .btn-fill {
+      background: var(--gold);
+      color: #0c0c0c;            /* Dark text on gold for legibility */
+    }
+    .btn-fill:hover {
+      background: var(--gold-lt);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(200,168,75,0.28);
+    }
+
+    /* Ghost button — secondary action */
+    .btn-ghost {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+    }
+    .btn-ghost:hover {
+      background: var(--gold);
+      color: #0c0c0c;
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       DIVIDER LINE  — thin horizontal rule between sections
+    ============================================================ */
+    .rule {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: var(--s4) 0;
+    }
+
+    /* ============================================================
+       PAGE 1 — HOME / HERO
+    ============================================================ */
+    .hero {
+      min-height: calc(100vh - 60px); /* Fill screen minus nav */
+      display: flex;
+      align-items: center;
+      padding: var(--s5) var(--s4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Atmospheric radial-gradient backdrop — pure CSS, no images */
+    .hero::before {
+      /* ::before: A pseudo-element injected BEFORE the hero's content.
+         We use it as a decorative layer without adding extra HTML. */
+      content: '';
+      position: absolute;
+      inset: 0;                  /* Shorthand: top/right/bottom/left all = 0 */
+      background:
+        radial-gradient(ellipse 55% 55% at 80% 40%, rgba(200,168,75,0.07) 0%, transparent 65%);
+      pointer-events: none;      /* Clicks pass through this decorative layer */
+    }
+
+    .hero-inner {
+      max-width: 1020px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Two equal columns */
+      gap: var(--s5);
+      align-items: center;
+      position: relative;
+      z-index: 1;               /* Sits above the ::before gradient */
+    }
+
+    /* Small prefix line + text above the name */
+    .hero-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: var(--s2);
+      margin-bottom: var(--s2);
+    }
+    /* Short horizontal rule drawn with a pseudo-element */
+    .hero-label::before {
+      content: '';
+      width: 30px;
+      height: 1px;
+      background: var(--gold);
+      flex-shrink: 0; /* Don't let the line compress */
+    }
+
+    /* Large name heading */
+    .hero-name {
+      font-family: var(--serif);
+      font-size: clamp(2.6rem, 6vw, 4.4rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: var(--s2);
+    }
+    .hero-name em {
+      /* <em> for the italic given-name highlight */
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-tagline {
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      color: var(--muted);
+      margin-bottom: var(--s2);
+      font-weight: 300;
+    }
+
+    .hero-intro {
+      font-size: 0.97rem;
+      line-height: 1.85;
+      color: var(--text);
+      opacity: 0.78;
+      margin-bottom: var(--s3);
+      max-width: 440px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: var(--s2);
+      flex-wrap: wrap; /* Stack on narrow screens */
+    }
+
+    /* ── Avatar column ── */
+    .avatar-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Slow-spinning decorative ring */
+    .avatar-ring {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      border: 1px dashed rgba(200,168,75,0.25);
+      animation: spin 28s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Rotates 360° continuously. Linear timing = constant speed. */
+
+    /* Circular photo frame */
+    .avatar {
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      overflow: hidden;          /* Clip SVG to the circle */
+      background: var(--surface);
+      position: relative;
+      z-index: 1;                /* Above the ring */
+    }
+    .avatar svg { width: 100%; height: 100%; }
+
+    /* ============================================================
+       PAGE 2 — ABOUT
+    ============================================================ */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr; /* Narrow bio, wider skills side */
+      gap: var(--s5);
+      align-items: start; /* Columns start at top, don't stretch */
+    }
+
+    .bio p {
+      font-size: 0.97rem;
+      line-height: 1.9;
+      color: var(--text);
+      opacity: 0.82;
+      margin-bottom: var(--s2);
+    }
+
+    /* Music interest badge */
+    .interest-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 99px;       /* Pill shape */
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: var(--s2);
+    }
+    .interest-badge span { color: var(--gold); font-size: 1rem; }
+
+    /* ── Skills ── */
+    .skills-list {
+      display: flex;
+      flex-direction: column;    /* Stack skill bars vertically */
+      gap: var(--s2);
+    }
+
+    .skill {
+      display: grid;
+      grid-template-columns: 140px 1fr 32px;
+      /* Label column | bar track | percentage label */
+      align-items: center;
+      gap: var(--s2);
+    }
+
+    .skill-name {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .bar-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;          /* Clip fill so it stays within the track */
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+      border-radius: 99px;
+      transform: scaleX(0);      /* Start at 0 width; JS sets the target */
+      transform-origin: left;    /* Grow from the left edge */
+      transition: transform 0.9s var(--ease);
+    }
+
+    .skill-pct {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: var(--s3);
+      margin-top: var(--s4);
+    }
+    /* Vertical line drawn via ::before on the container */
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;                 /* Align with the dots below */
+      top: 6px; bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .t-item {
+      position: relative;
+      margin-bottom: var(--s3);
+    }
+    /* Dot on the timeline line */
+    .t-item::before {
+      content: '';
+      position: absolute;
+      left: calc(-1 * var(--s3) + 2px); /* Sits on the vertical line */
+      top: 6px;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: 2px solid var(--bg); /* "Cut-out" ring effect */
+    }
+
+    .t-date  { font-size: 0.72rem; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; }
+    .t-title { font-family: var(--serif); font-size: 1.05rem; font-weight: 600; color: var(--text); margin: 2px 0; }
+    .t-org   { font-size: 0.85rem; color: var(--muted); margin-bottom: 4px; }
+    .t-desc  { font-size: 0.88rem; color: var(--text); opacity: 0.72; line-height: 1.7; }
+
+    /* ============================================================
+       PAGE 3 — PROJECTS  (CSS Grid layout as required)
+    ============================================================ */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      /* Two equal columns. Each project card occupies one cell. */
+      gap: var(--s3);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;          /* Clips the image to card corners */
+      display: flex;
+      flex-direction: column;    /* Stack: image → body → links */
+      transition: border-color 0.25s var(--ease), transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+    }
+    .card:hover {
+      border-color: var(--gold);
+      transform: translateY(-5px);          /* Lift the card on hover */
+      box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+    }
+
+    /* Emoji / placeholder image area */
+    .card-thumb {
+      height: 160px;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+    }
+
+    .card-body {
+      padding: var(--s3);
+      flex: 1;                   /* Grows to fill space, pushing links down */
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Tech stack badges */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: var(--s2);
+    }
+    .tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 9px;
+      border-radius: 99px;
+      background: rgba(200,168,75,0.1);  /* Faint gold fill */
+      color: var(--gold);
+      border: 1px solid rgba(200,168,75,0.22);
+    }
+
+    /* Status badge (e.g. "In Progress") */
+    .status {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 2px 9px;
+      border-radius: 99px;
+      background: rgba(200,168,75,0.08);
+      color: var(--gold-lt);
+      border: 1px solid rgba(200,168,75,0.18);
+      width: fit-content;
+      margin-bottom: var(--s1);
+    }
+
+    .card-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: var(--s1);
+    }
+
+    .card-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      flex: 1;                   /* Fills remaining vertical space */
+    }
+
+    .card-links {
+      padding: var(--s2) var(--s3);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: var(--s2);
+    }
+
+    .clink {
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: gap 0.2s var(--ease), color 0.2s;
+    }
+    .clink:hover { color: var(--gold-lt); gap: 9px; }
+    /* gap expands on hover — arrow appears to slide right */
+
+    /* ============================================================
+       PAGE 4 — CONTACT
+    ============================================================ */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr; /* Info | Form */
+      gap: var(--s5);
+      align-items: start;
+    }
+
+    .c-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--s2);
+      margin-bottom: var(--s3);
+    }
+
+    .c-icon {
+      width: 40px; height: 40px;
+      min-width: 40px;            /* Prevent icon from shrinking */
+      border-radius: 50%;
+      background: rgba(200,168,75,0.08);
+      border: 1px solid rgba(200,168,75,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .c-label { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .c-val   { font-size: 0.92rem; color: var(--text); }
+    .c-val a { color: var(--gold); text-decoration: none; transition: color 0.2s; }
+    .c-val a:hover { color: var(--gold-lt); }
+
+    /* Social icons row */
+    .socials { display: flex; gap: var(--s2); margin-top: var(--s3); }
+    .soc {
+      width: 40px; height: 40px;
+      border-radius: var(--r);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: all 0.25s var(--ease);
+    }
+    .soc:hover { background: var(--gold); border-color: var(--gold); color: #0c0c0c; transform: translateY(-3px); }
+
+    /* ── Form ── */
+    .form-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: var(--s4);
+    }
+
+    .form-box h3 {
+      font-family: var(--serif);
+      font-size: 1.4rem;
+      color: var(--text);
+      margin-bottom: var(--s3);
+    }
+
+    .fg { /* form-group: label + input pair */
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: var(--s2);
+    }
+
+    .fg label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .fg input,
+    .fg textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 0.72rem 0.9rem;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.92rem;
+      width: 100%;
+      outline: none;             /* Remove default browser focus ring */
+      transition: border-color 0.2s var(--ease), box-shadow 0.2s;
+    }
+
+    /* Custom focus ring for keyboard accessibility */
+    .fg input:focus,
+    .fg textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(200,168,75,0.12);
+    }
+
+    /* HTML5 constraint validation — invalid + not empty = red border */
+    .fg input:invalid:not(:placeholder-shown),
+    .fg textarea:invalid:not(:placeholder-shown) {
+      border-color: #c0392b;
+    }
+
+    .fg textarea {
+      resize: vertical;          /* User can resize only vertically */
+      min-height: 120px;
+    }
+
+    .fg input::placeholder,
+    .fg textarea::placeholder {
+      color: var(--muted);
+      opacity: 0.55;
+    }
+
+    /* Two-column form row for Name + Email side by side */
+    .form-row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s2);
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: flex-end; /* Align submit button to the right */
+      margin-top: var(--s3);
+    }
+
+    /* Success state — hidden until JS reveals it */
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: var(--s4) 0;
+    }
+    .success-msg.show { display: block; }
+    .success-msg .icon { font-size: 2.5rem; margin-bottom: var(--s2); }
+    .success-msg h3 { font-family: var(--serif); font-size: 1.5rem; color: var(--text); margin-bottom: var(--s1); }
+    .success-msg p  { color: var(--muted); font-size: 0.9rem; }
+
+    /* ============================================================
+       FOOTER — shared across all pages
+    ============================================================ */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: var(--s3) var(--s4);
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    footer b { color: var(--gold); font-weight: 500; }
+
+    /* ============================================================
+       RESPONSIVE BREAKPOINTS
+       Desktop-first: base styles target wide screens.
+       @media rules adjust for smaller viewports.
+    ============================================================ */
+    @media (max-width: 860px) {
+      .hero-inner  { grid-template-columns: 1fr; text-align: center; }
+      /* Stack hero text and avatar vertically on tablets */
+      .hero-label  { justify-content: center; }
+      .hero-intro  { max-width: 100%; margin-left: auto; margin-right: auto; }
+      .hero-btns   { justify-content: center; }
+      .avatar-wrap { order: -1; }  /* Show avatar ABOVE text on small screens */
+
+      .about-grid,
+      .contact-grid { grid-template-columns: 1fr; }
+      /* Single column for About and Contact on tablets */
+
+      .projects-grid { grid-template-columns: 1fr; }
+      /* Single column projects on tablets */
+    }
+
+    @media (max-width: 560px) {
+      nav { padding: 0 var(--s2); }
+      .wrap { padding: var(--s4) var(--s2); }
+      .form-row2 { grid-template-columns: 1fr; }
+      /* Stack name/email inputs on phones */
+      .nav-links { gap: var(--s2); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════
+       NAVIGATION
+  ═══════════════════════════════════════ -->
+  <nav>
+    <!-- <nav>: Semantic landmark — screen readers announce this as "navigation". -->
+
+    <a class="logo" href="file:///C:/Users/Tana_tsw.a/Downloads/portfolio_1.html#" onclick="go(&#39;home&#39;); return false;">
+      <!-- onclick: Calls our JS go() function to switch pages.
+           return false: Cancels the default <a> navigation (prevents URL change). -->
+      MTP.
+      <!-- Initials with a typographic period — minimal logomark. -->
+    </a>
+
+    <ul class="nav-links">
+      <!-- <ul>: Unordered list — semantically correct container for nav links. -->
+
+      <li><a href="file:///C:/Users/Tana_tsw.a/Downloads/portfolio_1.html#" data-page="home" class="active" onclick="go(&#39;home&#39;);     return false;">Home</a></li>
+      <!-- data-page: Custom HTML5 data attribute. JS reads this to know
+           which link to mark active. class="active" starts Home highlighted. -->
+
+      <li><a href="file:///C:/Users/Tana_tsw.a/Downloads/portfolio_1.html#" data-page="about" onclick="go(&#39;about&#39;);    return false;">About</a></li>
+      <li><a href="file:///C:/Users/Tana_tsw.a/Downloads/portfolio_1.html#" data-page="projects" onclick="go(&#39;projects&#39;); return false;">Projects</a></li>
+      <li><a href="file:///C:/Users/Tana_tsw.a/Downloads/portfolio_1.html#" data-page="contact" onclick="go(&#39;contact&#39;);  return false;">Contact</a></li>
+    </ul>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════
+       PAGE 1 — HOME
+  ═══════════════════════════════════════ -->
+  <section id="home" class="page active">
+    <!-- id="home": JS looks up this id to show/hide the page.
+         class="page active": "page" = part of the nav system; "active" = visible. -->
+
+    <div class="hero">
+
+      <div class="hero-inner">
+
+        <!-- Left: text -->
+        <div>
+          <p class="hero-label">
+            <!-- ::before draws a short gold line; CSS adds it automatically. -->
+            Information Security Student
+          </p>
+
+          <h1 class="hero-name">
+            <!-- <h1>: The primary heading. One per page — critical for SEO + a11y. -->
+            Macdonald
+            <em>Tanatswa</em>
+            <!-- <em>: Semantic emphasis. CSS renders it italic + gold. -->
+            Pazuwa
+          </h1>
+
+          <p class="hero-tagline">
+            InfoSec &amp; Assurance · Harare Institute of Technology
+            <!-- &amp;: HTML entity for &.
+                 &middot;: HTML entity for the middle dot · separator. -->
+          </p>
+
+          <p class="hero-intro">
+            I'm a passionate Information Security and Assurance student at HIT,
+            building secure and practical systems. Off the screen, you'll find me
+            deep in music — it keeps the creativity flowing.
+          </p>
+
+          <div class="hero-btns">
+            <a class="btn btn-fill" href="file:///C:/Users/Tana_tsw.a/Downloads/portfolio_1.html#" onclick="go(&#39;projects&#39;); return false;">View Projects</a>
+            <a class="btn btn-ghost" href="file:///C:/Users/Tana_tsw.a/Downloads/portfolio_1.html#" onclick="go(&#39;contact&#39;);  return false;">Contact Me</a>
+          </div>
+        </div>
+
+        <!-- Right: avatar -->
+        <div class="avatar-wrap">
+          <div class="avatar-ring" aria-hidden="true"></div>
+          <!-- aria-hidden="true": Decorative ring — screen readers skip it. -->
+
+          <div class="avatar">
+            <!-- Inline SVG avatar — no external image dependency needed. -->
+            <!-- In production replace with: <img src="photo.jpg" alt="Macdonald Pazuwa"> -->
+            <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" aria-label="Macdonald Pazuwa avatar">
+              <!-- aria-label: Accessible name for the SVG image. -->
+
+              <!-- Background rectangle -->
+              <rect width="240" height="240" fill="#1a1a1a"></rect>
+              <!-- <rect>: A rectangle. width/height fill the full SVG canvas. -->
+
+              <!-- Torso / shirt -->
+              <ellipse cx="120" cy="228" rx="75" ry="52" fill="#202020"></ellipse>
+              <!-- <ellipse>: Oval shape. cx/cy = centre; rx/ry = horizontal/vertical radii. -->
+
+              <!-- Shirt collar — V-shape drawn as a path -->
+              <path d="M98 192 L120 215 L142 192" stroke="#c8a84b" stroke-width="1.5" fill="none"></path>
+              <!-- <path d="...">: Free-form shape. M = move to (no line). L = line to.
+                   stroke: outline colour. fill:none = hollow shape. -->
+
+              <!-- Head / face base -->
+              <circle cx="120" cy="128" r="54" fill="#8B5E3C"></circle>
+              <!-- <circle>: cx/cy = centre; r = radius. -->
+
+              <!-- Hair -->
+              <ellipse cx="120" cy="83" rx="54" ry="28" fill="#1a0e05"></ellipse>
+
+              <!-- Ears -->
+              <ellipse cx="66" cy="130" rx="9" ry="12" fill="#7a5232"></ellipse>
+              <ellipse cx="174" cy="130" rx="9" ry="12" fill="#7a5232"></ellipse>
+
+              <!-- Left eye: white + iris + pupil (three layered circles) -->
+              <ellipse cx="102" cy="126" rx="7" ry="8" fill="#fff"></ellipse>
+              <circle cx="104" cy="127" r="5" fill="#2a1a0e"></circle>
+              <circle cx="105" cy="126" r="2" fill="#000"></circle>
+
+              <!-- Right eye -->
+              <ellipse cx="138" cy="126" rx="7" ry="8" fill="#fff"></ellipse>
+              <circle cx="136" cy="127" r="5" fill="#2a1a0e"></circle>
+              <circle cx="137" cy="126" r="2" fill="#000"></circle>
+
+              <!-- Eyebrows — quadratic Bezier curves -->
+              <path d="M93 114 Q103 109 113 113" stroke="#1a0e05" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+              <!-- Q x1 y1 x y: Quadratic Bezier — x1/y1 is the control point, x/y is end.
+                   stroke-linecap="round": Rounded stroke ends. -->
+              <path d="M127 113 Q137 109 147 114" stroke="#1a0e05" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+
+              <!-- Nose -->
+              <ellipse cx="120" cy="140" rx="5" ry="4" fill="#7a5232"></ellipse>
+
+              <!-- Smile -->
+              <path d="M106 153 Q120 165 134 153" stroke="#1a0e05" stroke-width="2.2" fill="none" stroke-linecap="round"></path>
+
+              <!-- Music note — reflects passion for music; low opacity = subtle decoration -->
+              <text x="162" y="56" font-size="22" fill="rgba(200,168,75,0.55)" font-family="serif">♪</text>
+              <!-- <text>: SVG text element. &#9834; = ♪ musical note character.
+                   fill with 0.55 opacity keeps it as a background accent. -->
+            </svg>
+          </div><!-- /.avatar -->
+        </div><!-- /.avatar-wrap -->
+
+      </div><!-- /.hero-inner -->
+    </div><!-- /.hero -->
+
+    <footer>
+      © 2025 <b>Macdonald Tanatswa Pazuwa</b> · HIT Zimbabwe
+      <!-- &copy;: Copyright symbol ©. &middot;: Middle dot separator. -->
+    </footer>
+
+  </section><!-- /#home -->
+
+
+  <!-- ═══════════════════════════════════════
+       PAGE 2 — ABOUT
+  ═══════════════════════════════════════ -->
+  <section id="about" class="page">
+
+    <div class="wrap">
+
+      <span class="eyebrow">Who I am</span>
+      <h2 class="heading">About Me</h2>
+      <!-- <h2>: Second-level heading. <h1> is on the hero so h2 is correct here. -->
+
+      <div class="about-grid">
+
+        <!-- Left: biography text -->
+        <div class="bio">
+          <p>
+            I'm Macdonald Tanatswa Pazuwa, an Information Security and Assurance
+            student at the Harare Institute of Technology (HIT) in Zimbabwe. My
+            academic journey is driven by a genuine curiosity about how systems
+            fail — and how to build them stronger.
+          </p>
+          <p>
+            I am interested in network security, ethical hacking, and secure
+            software design. I enjoy turning theoretical concepts into practical
+            tools — even a simple calculator teaches discipline in logic and
+            clean code structure.
+          </p>
+          <p>
+            Outside academics, music is my sanctuary. Whether listening to
+            afrobeats or fingerpicking a guitar, sound shapes how I think and
+            approach problem-solving creatively.
+          </p>
+
+          <!-- Interest pill badge -->
+          <div class="interest-badge">
+            <span>♪</span> Passionate about music
+            <!-- &#9834;: ♪ musical note Unicode character. -->
+          </div>
+        </div>
+
+        <!-- Right: skills + timeline -->
+        <div>
+
+          <span class="eyebrow">Skills</span>
+
+          <!-- id="skillsEl": JS targets this to trigger bar animations. -->
+          <div class="skills-list" id="skillsEl">
+
+            <!-- Each .skill: three-column grid — name | bar track | percentage.
+                 data-pct="0.82" stores the decimal target fill (0.0 – 1.0).
+                 JS reads this and sets scaleX() to grow the bar to that width. -->
+
+            <div class="skill">
+              <span class="skill-name">Network Security</span>
+              <div class="bar-track"><div class="bar-fill" data-pct="0.82"></div></div>
+              <span class="skill-pct">82%</span>
+            </div>
+
+            <div class="skill">
+              <span class="skill-name">Linux / CLI</span>
+              <div class="bar-track"><div class="bar-fill" data-pct="0.78"></div></div>
+              <span class="skill-pct">78%</span>
+            </div>
+
+            <div class="skill">
+              <span class="skill-name">Python</span>
+              <div class="bar-track"><div class="bar-fill" data-pct="0.75"></div></div>
+              <span class="skill-pct">75%</span>
+            </div>
+
+            <div class="skill">
+              <span class="skill-name">HTML / CSS / JS</span>
+              <div class="bar-track"><div class="bar-fill" data-pct="0.70"></div></div>
+              <span class="skill-pct">70%</span>
+            </div>
+
+            <div class="skill">
+              <span class="skill-name">Cryptography</span>
+              <div class="bar-track"><div class="bar-fill" data-pct="0.65"></div></div>
+              <span class="skill-pct">65%</span>
+            </div>
+
+          </div><!-- /#skillsEl -->
+
+          <hr class="rule">
+          <!-- <hr>: Thematic break — a horizontal divider line. Styled in CSS. -->
+
+          <!-- Timeline: Education & Experience -->
+          <span class="eyebrow">Timeline</span>
+
+          <div class="timeline">
+            <!-- .timeline::before draws the vertical line via CSS pseudo-element. -->
+
+            <div class="t-item">
+              <!-- .t-item::before draws the gold dot on the timeline. -->
+              <div class="t-date">2023 – Present</div>
+              <!-- &ndash;: HTML entity for an en-dash (–), wider than a hyphen. -->
+              <div class="t-title">B.Sc. Information Security &amp; Assurance</div>
+              <div class="t-org">Harare Institute of Technology · Zimbabwe</div>
+              <div class="t-desc">
+                Studying network security, cryptography, digital forensics, and
+                secure systems design. Currently developing a School Management
+                System as a team academic project.
+              </div>
+            </div>
+
+            <div class="t-item">
+              <div class="t-date">2022</div>
+              <div class="t-title">A-Level · Mathematics, Physics, Computer Science</div>
+              <div class="t-org">Secondary School · Zimbabwe</div>
+              <div class="t-desc">
+                Completed A-Levels with a STEM focus. Developed early interest
+                in programming and logical problem-solving.
+              </div>
+            </div>
+
+          </div><!-- /.timeline -->
+
+        </div><!-- /right column -->
+      </div><!-- /.about-grid -->
+    </div><!-- /.wrap -->
+
+    <footer>© 2025 <b>Macdonald Tanatswa Pazuwa</b> · HIT Zimbabwe</footer>
+
+  </section><!-- /#about -->
+
+
+  <!-- ═══════════════════════════════════════
+       PAGE 3 — PROJECTS
+  ═══════════════════════════════════════ -->
+  <section id="projects" class="page">
+
+    <div class="wrap">
+
+      <span class="eyebrow">What I've built</span>
+      <h2 class="heading">Projects</h2>
+
+      <!-- CSS Grid: 2 equal columns on desktop; 1 column on mobile (via @media).
+           grid-template-columns: repeat(2, 1fr)
+             repeat(2, ...)  = two times
+             1fr             = one fraction unit each (equal widths)          -->
+      <div class="projects-grid">
+
+        <!-- ── PROJECT 1: School Management System ── -->
+        <article class="card">
+          <!--
+            <article>: Self-contained, reusable content block.
+            A project card can stand alone — semantically an article.
+          -->
+
+          <div class="card-thumb" role="img" aria-label="School Management System">
+            <!-- role="img" + aria-label: Makes the emoji placeholder
+                 accessible to screen readers as a named image region. -->
+            🏫
+            <!-- &#127979;: 🏫 school building emoji. -->
+          </div>
+
+          <div class="card-body">
+
+            <div class="status">🔧 In Progress</div>
+            <!-- &#128295;: 🔧 wrench emoji. Status communicates the project is ongoing. -->
+
+            <div class="tags">
+              <!-- Technology badges — pill-shaped labels styled in CSS. -->
+              <span class="tag">PHP</span>
+              <span class="tag">MySQL</span>
+              <span class="tag">HTML/CSS</span>
+              <span class="tag">JavaScript</span>
+            </div>
+
+            <h3 class="card-title">School Management System</h3>
+            <!--
+              <h3>: Third-level heading — one level below page's h2.
+              Keeps the heading hierarchy correct (h1 → h2 → h3).
+            -->
+
+            <p class="card-desc">
+              A web-based system to manage student records, class timetables,
+              grades, and teacher assignments for secondary schools. Built as a
+              team academic project at HIT. Features role-based access control
+              and a secure login system — putting InfoSec principles into practice.
+            </p>
+
+          </div><!-- /.card-body -->
+
+          <div class="card-links">
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="clink">
+              <!-- target="_blank": Opens in a new tab.
+                   rel="noopener noreferrer":
+                     noopener  — new tab cannot access the opener window (XSS guard).
+                     noreferrer — suppresses HTTP Referer header (privacy). -->
+              GitHub →
+              <!-- &#8594;: → right arrow character. -->
+            </a>
+          </div>
+
+        </article><!-- /.card project 1 -->
+
+        <!-- ── PROJECT 2: Calculator ── -->
+        <article class="card">
+
+          <div class="card-thumb" role="img" aria-label="Calculator project">
+            🧮
+            <!-- &#129518;: 🧮 abacus emoji used as a calculator placeholder. -->
+          </div>
+
+          <div class="card-body">
+
+            <div class="status">✅ Complete</div>
+            <!-- &#9989;: ✅ green checkmark emoji. -->
+
+            <div class="tags">
+              <span class="tag">HTML</span>
+              <span class="tag">CSS</span>
+              <span class="tag">JavaScript</span>
+            </div>
+
+            <h3 class="card-title">Calculator</h3>
+
+            <p class="card-desc">
+              A clean, functional browser-based calculator supporting addition,
+              subtraction, multiplication, division, and percentage operations.
+              Built to practise DOM manipulation, event handling, and writing
+              clean vanilla JavaScript — no frameworks or libraries used.
+            </p>
+
+          </div><!-- /.card-body -->
+
+          <div class="card-links">
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="clink">GitHub →</a>
+            <a href="https://example.com/" target="_blank" rel="noopener noreferrer" class="clink">Live Demo →</a>
+          </div>
+
+        </article><!-- /.card project 2 -->
+
+      </div><!-- /.projects-grid -->
+    </div><!-- /.wrap -->
+
+    <footer>© 2025 <b>Macdonald Tanatswa Pazuwa</b> · HIT Zimbabwe</footer>
+
+  </section><!-- /#projects -->
+
+
+  <!-- ═══════════════════════════════════════
+       PAGE 4 — CONTACT
+  ═══════════════════════════════════════ -->
+  <section id="contact" class="page">
+
+    <div class="wrap">
+
+      <span class="eyebrow">Say hello</span>
+      <h2 class="heading">Get In Touch</h2>
+
+      <div class="contact-grid">
+
+        <!-- Left: contact details + social links -->
+        <div>
+
+          <!-- Email -->
+          <div class="c-item">
+            <div class="c-icon" aria-hidden="true">✉</div>
+            <!-- &#9993;: ✉ envelope. aria-hidden: decorative, skip by screen readers. -->
+            <div>
+              <div class="c-label">Email</div>
+              <div class="c-val">
+                <a href="mailto:macdonald.pazuwa@hit.ac.zw">
+                  <!-- mailto: URI scheme — opens the user's default email client
+                       pre-addressed to this address. -->
+                  macdonald.pazuwa@hit.ac.zw
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="c-item">
+            <div class="c-icon" aria-hidden="true">📍</div>
+            <!-- &#128205;: 📍 pin emoji. -->
+            <div>
+              <div class="c-label">Location</div>
+              <div class="c-val">Harare, Zimbabwe</div>
+            </div>
+          </div>
+
+          <!-- Institution -->
+          <div class="c-item">
+            <div class="c-icon" aria-hidden="true">🎓</div>
+            <!-- &#127891;: 🎓 graduation cap emoji. -->
+            <div>
+              <div class="c-label">Institution</div>
+              <div class="c-val">Harare Institute of Technology</div>
+            </div>
+          </div>
+
+          <!-- Social media icon strip -->
+          <div class="socials">
+
+            <!-- GitHub -->
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="soc" aria-label="GitHub profile">
+              <!-- aria-label: Provides an accessible name for this icon-only link. -->
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <!-- fill="currentColor": Icon colour = CSS `color` property of the parent.
+                     This lets hover styles recolour the icon purely with CSS. -->
+                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"></path>
+              </svg>
+            </a>
+
+            <!-- LinkedIn -->
+            <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" class="soc" aria-label="LinkedIn profile">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path>
+              </svg>
+            </a>
+
+            <!-- Twitter / X -->
+            <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" class="soc" aria-label="Twitter / X profile">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+              </svg>
+            </a>
+
+          </div><!-- /.socials -->
+
+        </div><!-- /left column -->
+
+        <!-- Right: contact form -->
+        <div>
+          <div class="form-box">
+
+            <h3>Send a Message</h3>
+
+            <!-- <form>: The HTML form element.
+                 novalidate: Disables browser's built-in popup error messages.
+                   We still use HTML5 constraint attributes (required, type, minlength)
+                   but check them manually in JS for full control of the error UI. -->
+            <form id="contactForm" novalidate="">
+
+              <!-- Name + Email in two equal columns -->
+              <div class="form-row2">
+
+                <div class="fg">
+                  <label for="f-name">Name</label>
+                  <!-- <label for="f-name">: Clicking the label focuses input id="f-name".
+                       Improves usability and is required for screen reader association. -->
+                  <input type="text" id="f-name" name="name" placeholder="Your name" required="" minlength="2" autocomplete="name">
+                  <!-- type="text"   : Single-line text field.
+                       required      : HTML5 — field cannot be empty.
+                       minlength="2" : At least 2 characters.
+                       autocomplete  : Hints browser to autofill. -->
+                </div>
+
+                <div class="fg">
+                  <label for="f-email">Email</label>
+                  <input type="email" id="f-email" name="email" placeholder="your@email.com" required="" autocomplete="email">
+                  <!-- type="email": HTML5 validates format (must contain @).
+                       Shows email keyboard on mobile. -->
+                </div>
+
+              </div><!-- /.form-row2 -->
+
+              <!-- Subject — full width -->
+              <div class="fg">
+                <label for="f-subject">Subject</label>
+                <input type="text" id="f-subject" name="subject" placeholder="What&#39;s this about?" required="" minlength="4">
+              </div>
+
+              <!-- Message — multi-line textarea -->
+              <div class="fg">
+                <label for="f-msg">Message</label>
+                <textarea id="f-msg" name="message" placeholder="Your message…" required="" minlength="15"></textarea>
+                <!-- <textarea>: Multi-line text input.
+                     Needs an explicit closing tag (unlike self-closing <input>).
+                     &#8230;: HTML entity for the ellipsis character …
+                     minlength="15": At least 15 characters required. -->
+              </div>
+
+              <!-- Submit -->
+              <div class="form-footer">
+                <button type="submit" class="btn btn-fill">
+                  <!-- type="submit": Triggers the form's submit event when clicked. -->
+                  Send ✈
+                  <!-- &#9992;: ✈ airplane character (decorative send icon). -->
+                </button>
+              </div>
+
+            </form><!-- /#contactForm -->
+
+            <!-- Success message — display:none until JS adds class "show" -->
+            <div class="success-msg" id="successMsg">
+              <div class="icon">✅</div>
+              <!-- &#9989;: ✅ green checkbox emoji. -->
+              <h3>Message Sent!</h3>
+              <p>Thanks for reaching out. I'll reply as soon as I can.</p>
+            </div>
+
+          </div><!-- /.form-box -->
+        </div><!-- /right column -->
+
+      </div><!-- /.contact-grid -->
+    </div><!-- /.wrap -->
+
+    <footer>© 2025 <b>Macdonald Tanatswa Pazuwa</b> · HIT Zimbabwe</footer>
+
+  </section><!-- /#contact -->
+
+
+  <!-- ═══════════════════════════════════════
+       JAVASCRIPT
+       Placed at the END of <body> so all HTML elements above
+       are already parsed by the browser before this runs.
+  ═══════════════════════════════════════ -->
+  <script>
+
+    /*
+     * ─────────────────────────────────────────────
+     * 1.  go(pageId)  —  Page navigation
+     *     Called by onclick on every nav link.
+     *     Shows one page, hides the rest,
+     *     updates the active nav highlight.
+     * ─────────────────────────────────────────────
+     */
+    function go(pageId) {
+
+      /* Hide every page */
+      document.querySelectorAll('.page').forEach(function(p) {
+        /* querySelectorAll('.page'): NodeList of all elements with class "page".
+           .forEach(): Iterates over each — like a for-loop.                     */
+        p.classList.remove('active');
+        /* classList.remove('active'): Removes "active" → CSS hides the page.    */
+      });
+
+      /* Show the requested page */
+      var el = document.getElementById(pageId);
+      /* getElementById(pageId): Finds the element whose id === pageId.          */
+      if (el) el.classList.add('active');
+      /* classList.add('active'): Makes the page visible; triggers @keyframes rise. */
+
+      /* Update nav active state */
+      document.querySelectorAll('.nav-links a').forEach(function(a) {
+        a.classList.remove('active');
+        /* First clear every link's active state.                                 */
+        if (a.dataset.page === pageId) a.classList.add('active');
+        /* a.dataset.page reads the data-page="..." HTML attribute.
+           If it matches, mark this link as active.                               */
+      });
+
+      /* Scroll to top of page */
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      /* scrollTo({top:0}): Scroll viewport to the very top.
+         behavior:'smooth': Animate the scroll instead of instant jump.           */
+
+      /* Trigger skill bar animation only on the About page */
+      if (pageId === 'about') animateBars();
+      /* Running animateBars() on hidden pages would waste animation frames.      */
+    }
+
+
+    /*
+     * ─────────────────────────────────────────────
+     * 2.  animateBars()  —  Skill bar fill
+     *     Reads data-pct from each .bar-fill element
+     *     and sets scaleX() to grow the bar to that
+     *     fraction, staggered by 120ms per bar.
+     * ─────────────────────────────────────────────
+     */
+    function animateBars() {
+      document.querySelectorAll('.bar-fill').forEach(function(fill, i) {
+        /* fill: current element. i: zero-based index.                           */
+
+        var pct = parseFloat(fill.dataset.pct);
+        /* fill.dataset.pct reads data-pct="0.82" as the string "0.82".
+           parseFloat() converts it to the number 0.82.                          */
+
+        setTimeout(function() {
+          /* setTimeout(fn, ms): Run fn after ms milliseconds.
+             i * 120: Each bar starts 120ms after the previous one.
+             This creates a cascading stagger animation.                          */
+          fill.style.transform = 'scaleX(' + pct + ')';
+          /* scaleX(0.82): Scale the element to 82% of its natural width.
+             Because transform-origin: left is set in CSS, it grows from the left.
+             The CSS transition: transform 0.9s animates the change smoothly.     */
+        }, i * 120);
+      });
+    }
+
+
+    /*
+     * ─────────────────────────────────────────────
+     * 3.  Contact form — validation + submission
+     *     Uses HTML5 ValidityState API to check each
+     *     field on submit. Invalid fields get a red
+     *     border. Valid submission shows success msg.
+     * ─────────────────────────────────────────────
+     */
+    var form = document.getElementById('contactForm');
+    /* Get a reference to the form so we can attach an event listener.           */
+
+    if (form) {
+      /* Guard: only proceed if the form actually exists in the DOM.             */
+
+      form.addEventListener('submit', function(e) {
+        /* addEventListener('submit', fn): fn runs on every form submission.     */
+        e.preventDefault();
+        /* preventDefault(): Stops the browser's default form-submit behaviour
+           (which would reload / navigate away from the page).                   */
+
+        var ok = true;
+        /* Start assuming the form is valid; flip false on any failure.          */
+
+        form.querySelectorAll('input, textarea').forEach(function(field) {
+          /* Loop over every text input and textarea in the form.                */
+          field.style.borderColor = '';
+          /* Reset any red border from a previous failed attempt.
+             Assigning '' removes the inline style, restoring the CSS rule.      */
+
+          if (!field.validity.valid) {
+            /* field.validity is the HTML5 ValidityState object.
+               .valid === false when required is unfilled, minlength is too short,
+               or type="email" format is wrong.                                  */
+            field.style.borderColor = '#c0392b';
+            /* Paint a red border on the failing field.                          */
+            if (ok) field.focus();
+            /* Focus the FIRST invalid field (ok is still true on first failure).
+               This directs the user's attention to fix it.                      */
+            ok = false;
+            /* Mark overall form invalid.                                        */
+          }
+        });
+
+        if (!ok) return;
+        /* Early exit — do not proceed to success state if any field is invalid. */
+
+        /* ── Simulate a successful network submission ─────────────────────
+           In a real deployment, replace this with a fetch() POST call:
+           fetch('/api/contact', { method:'POST', body: new FormData(form) })
+             .then(res => res.json())
+             .then(() => showSuccess())
+             .catch(err => console.error(err));
+        ─────────────────────────────────────────────────────────────────── */
+        showSuccess();
+      });
+    }
+
+    /* showSuccess: hides the form, reveals the confirmation message */
+    function showSuccess() {
+      var f = document.getElementById('contactForm');
+      var s = document.getElementById('successMsg');
+      if (f) f.style.display = 'none';
+      /* display:'none': Inline style hides the form completely.                 */
+      if (s) s.classList.add('show');
+      /* Adding "show" triggers the CSS rule:
+         .success-msg.show { display: block; }  → message becomes visible.       */
+    }
+
+  </script>
+  <!-- End of all JavaScript -->
+
+
+
+
+
+</body><!-- </body>: All visible and interactive content ends here. --></html>
